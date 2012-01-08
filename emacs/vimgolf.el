@@ -85,8 +85,34 @@ with `C-c C-v` prefixes to help in playing VimGolf.
   :keymap vimgolf-mode-map
   :group 'vimgolf)
 
+(setq vimgolf-challenge-ids '("4d6f45b938c0aa691b000003"
+			      "4de6287b17a57a000100003f"
+			      "4dddc7c1ed7380000100000d"
+			      "4ddbd92898957e0001000016"
+			      "4dd3e19aec9eb6000100000d"
+			      "4dcd7b572c8e510001000005"
+			      "4db2c9272a007d1ee7000015"
+			      "4db0b1c8e8eb0f564b00001c"
+			      "4dab05bff1161c5a78000011"
+			      "4d841db4c46db57aae00002f"
+			      "4d716c76919202611400002b"
+			      "4d665abd7d73e02a55000009"
+			      "4d5110077667ad04c4000018"
+			      "4d4bc8512e218a370300001c"
+			      "4d4ab047795d626036000034"
+			      "4d42cde1e6dc010cb7000024"
+			      "4d3c51f1aabf526ed6000030"
+			      "4d39030bafc67a0f8c000076"
+			      "4d34af20e747f561b3000081"
+			      "4d2fb20e63b08b08b0000075"
+			      "4d2f0fe063b08b08b0000019"
+			      "4d2c9d06eda6262e4e00007a"
+			      "4d29ae2107e0177c7e000036"))
+
 (defvar vimgolf-challenge nil)
-(defvar vimgolf-challenge-history nil)
+(defvar vimgolf-challenge-history
+  (reverse vimgolf-challenge-ids)
+  "Default history list for vimgolf. Seeded with challenge ids from 1-23")
 
 (defvar vimgolf-prior-window-configuration nil)
 
