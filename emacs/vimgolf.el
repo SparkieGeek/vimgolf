@@ -51,6 +51,20 @@
   :type 'string
   :group 'vimgolf)
 
+(defcustom vimgolf-bitly-user nil
+  "Your bitly Username. Used to translate from challenge numbers to IDs
+
+See http://bitly.com/a/your_api_key"
+  :type 'string
+  :group 'vimgolf)
+
+(defcustom vimgolf-bitly-key nil
+  "Your bitly API key. Used to translate from challenge number to IDs.
+
+See http://bitly.com/a/your_api_key"
+  :type 'string
+  :group 'vimgolf)
+
 (defcustom vimgolf-mode-hook '((lambda () (whitespace-mode t)))
   "A list of functions to call upon the initialization of vimgolf-mode."
   :type 'hook
@@ -109,10 +123,29 @@ with `C-c C-v` prefixes to help in playing VimGolf.
 			      "4d2c9d06eda6262e4e00007a"
 			      "4d29ae2107e0177c7e000036"))
 
+;; TODO: Use this to transition to numbers instead of challenge IDs internally?
+(defun vimgolf-get-single-challenge-id (challenge-number)
+  "Gets the challenge ID for a given challenge number"
+  (unless (and vimgolf-bitly-user vimgolf-bitly-key)
+    (error "Please setup `vimgolf-bitly-user' and `vimgolf-bitly-key'"))
+  (unless (integer-or-marker-p challenge-number)
+    (error "Challenge number must be an integer"))
+  (let ((base-url (format "https://api-ssl.bitly.com/v3/expand?login=%s&apiKey=%s&format=txt" vimgolf-bitly-user vimgolf-bitly-key))
+	(url-param (format "shortUrl=http%%3A%%2F%%2Fj.mp%%2Fvimgolf%03d" challenge-number)))
+    (with-current-buffer (url-retrieve-synchronously (format "%s&%s" base-url url-param))
+      (let ((end (- (point) 1)))
+	(unless (re-search-backward "\n\nhttp://vimgolf.com/challenges/" nil t)
+	  (error "Can't find vimgolf valid response data from bitly"))
+	(buffer-substring-no-properties (match-end 0) end)))))
+
+;; This is slow, but gives an easy way to update the default history.
+;; (setq vimgolf-challenge-ids (mapcar 'vimgolf-get-single-challenge-id (number-sequence 1 23)))
+
+	
 (defvar vimgolf-challenge nil)
 (defvar vimgolf-challenge-history
   (reverse vimgolf-challenge-ids)
-  "Default history list for vimgolf. Seeded with challenge ids from 1-23")
+  "Default history list for vimgolf. Seeded with existing challenge ids")
 
 (defvar vimgolf-prior-window-configuration nil)
 
