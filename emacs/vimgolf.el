@@ -311,12 +311,12 @@ unknown key sequence was entered).")
           (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
 
       (with-current-buffer vimgolf-start-buffer
-	(vimgolf-init-buffer start-text))
-      
+        (vimgolf-init-buffer start-text))
+
       (with-current-buffer vimgolf-end-buffer
-	(vimgolf-init-buffer end-text)
-	(setq buffer-read-only t))
-      
+        (vimgolf-init-buffer end-text)
+        (setq buffer-read-only t))
+
       (vimgolf-reset-work-buffer)
 
       ;; Set up windows
