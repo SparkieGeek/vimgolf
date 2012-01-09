@@ -209,8 +209,7 @@ unknown key sequence was entered).")
 (defun vimgolf-reset-work-buffer ()
   "Reset the contents of the work buffer, and clear undo/macro history etc."
   (with-current-buffer (get-buffer-create vimgolf-work-buffer-name)
-    (vimgolf-init-buffer (current-buffer)
-                         (with-current-buffer vimgolf-start-buffer-name
+    (vimgolf-init-buffer (with-current-buffer vimgolf-start-buffer-name
                            (buffer-string)))
     (when defining-kbd-macro
       (end-kbd-macro))
@@ -270,12 +269,11 @@ unknown key sequence was entered).")
 (defun vimgolf-challenge-url (challenge-id)
   (concat vimgolf-host (vimgolf-challenge-path challenge-id) vimgolf-challenge-extension))
 
-(defun vimgolf-init-buffer (buffer text)
-  (with-current-buffer buffer
-    (erase-buffer)
-    (insert text)
-    (beginning-of-buffer)
-    (vimgolf-mode t)))
+(defun vimgolf-init-buffer (text)
+  (erase-buffer)
+  (insert text)
+  (beginning-of-buffer)
+  (vimgolf-mode t))
 
 (defun vimgolf-kill-existing-session ()
   "Kill any vimgolf-related buffers."
@@ -312,8 +310,13 @@ unknown key sequence was entered).")
           (vimgolf-work-buffer (get-buffer-create vimgolf-work-buffer-name))
           (vimgolf-end-buffer (get-buffer-create vimgolf-end-buffer-name)))
 
-      (vimgolf-init-buffer vimgolf-start-buffer start-text)
-      (vimgolf-init-buffer vimgolf-end-buffer end-text)
+      (with-current-buffer vimgolf-start-buffer
+        (vimgolf-init-buffer start-text))
+
+      (with-current-buffer vimgolf-end-buffer
+        (vimgolf-init-buffer end-text)
+        (setq buffer-read-only t))
+
       (vimgolf-reset-work-buffer)
 
       ;; Set up windows
